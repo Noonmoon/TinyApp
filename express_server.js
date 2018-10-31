@@ -57,12 +57,23 @@ app.get("/hello", (req, res) => {
 app.post("/urls", (req, res) => {
   let rng = generateRandomString()
   urlDatabase[rng] = req.body.longURL
-  res.redirect(`http://localhost:3000/urls/${rng}`);
+  res.redirect(`/urls/${rng}`);
 });
 
 app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[req.params.shortURL]
   res.redirect(longURL);
 });
+
+app.post("/urls/:id/delete", (req, res) => {
+  delete urlDatabase[req.params.id]
+  res.redirect("/urls")
+});
+
+app.post("/urls/:id", (req, res) => {
+  urlDatabase[req.params.id] = req.body.longURL
+  res.redirect(`/urls/${req.params.id}`)
+});
+
 
 

@@ -2,15 +2,25 @@
 <html lang="en">
 <head>
   <% include partials/_header.ejs %>
+  <style>
+  ul li form {
+    display: inline-block;
+  }
+  </style>
 </head>
 <body>
   <ul>
     <% for (var key in urls) { %>
-      <li><%= `${urls[key]} : ${key}` %></li>
+      <li style="font-size: 20px">
+        <%= `${urls[key]} : ${key}` %>  <a href="<%=`http://localhost:3000/urls/${key}`%>" style="margin:10px;">Edit</a>
+        <form method="POST" action="/urls/<%=key%>/delete">
+          <input type="submit" value="Delete">
+        </form>
+      </li>
     <% }; %>
   </ul>
   <form>
-    <input type="button" value="Create new TinyURL" onclick="window.location.href='#'" />
+    <input type="button" value="Create new TinyURL" onclick="window.location.href=''" />
   </form>
 </body>
 </html>

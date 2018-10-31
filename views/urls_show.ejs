@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>short urls</title>
+  <% include partials/_header.ejs %>
 </head>
 <body>
-  <ul>
-    <li><%= `${shortURL} : ${longURL}` %></li>
-  </ul>
+  <h1 style="margin:25px"><%= `ShortURL: ${shortURL}` %></h1>
+  <form method="POST" action="/urls/<%=shortURL%>" style="margin:25px">
+    <input id="longURL" type="text" name="longURL" placeholder= <%= longURL %> style="width: 200px; height: 15px">
+    <input type="submit" value="Update">
+  </form>
 </body>
 </html>
