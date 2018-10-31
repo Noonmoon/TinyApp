@@ -22,7 +22,7 @@ generateRandomString();
 
 
 app.get("/", (req, res) => {
-  res.send("HI LANA I LOVE YOUUUU!!!!!");
+  res.send("Welcome to the main page!");
 });
 
 app.listen(PORT, () => {
