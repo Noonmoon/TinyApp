@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <% include partials/_header.ejs %>
+</head>
+<body>
+  <ul>
+    <% for (var key in urls) { %>
+      <li><%= `${urls[key]} : ${key}` %></li>
+    <% }; %>
+  </ul>
+  <form>
+    <input type="button" value="Create new TinyURL" onclick="window.location.href='#'" />
+  </form>
+</body>
+</html>
