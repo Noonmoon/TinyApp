@@ -12,6 +12,8 @@ var urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+var users = {};
+
 function generateRandomString() {
   let result = '';
   const characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -36,7 +38,8 @@ app.get("/urls.json", (req, res) => {
 
 app.get("/urls", (req, res) => {
   let templateVars = {
-    username: req.cookies["username"],
+    users: users,
+    currentUser: req.cookies["user_id"],
     urls: urlDatabase
   };
   res.render("urls_index.ejs", templateVars);
@@ -44,14 +47,16 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   let templateVars = {
-    username: req.cookies["username"]
+    users: users,
+    currentUser: req.cookies["user_id"]
   };
   res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:id", (req, res) => {
   let templateVars = {
-    username: req.cookies["username"],
+    users: users,
+    currentUser: req.cookies["user_id"],
     shortURL: req.params.id,
     longURL: urlDatabase[req.params.id]
   };
@@ -65,6 +70,14 @@ app.get("/hello", (req, res) => {
 app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[req.params.shortURL]
   res.redirect(longURL);
+});
+
+app.get("/register", (req, res) => {
+  res.render("urls_register")
+});
+
+app.get("/login", (req, res) => {
+  res.render("urls_login")
 });
 
 app.post("/urls", (req, res) => {
@@ -84,14 +97,54 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  let user = req.body.username
-  res.cookie('username', user);
-  res.redirect("/urls")
+  for (var username in users) {
+    var matchFound = false;
+    var userMatch;
+    if (users[username].email === req.body.email && users[username].password === req.body.password) {
+      matchFound = true
+      userMatch = users[username].id
+    }
+  };
+    if (matchFound) {
+      res.cookie("user_id", userMatch)
+      res.redirect("/urls")
+    } else {
+      res.status(403)
+      res.send('Error code 403: Paramaters not found')
+    };
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie('username')
+  res.clearCookie('user_id')
   res.redirect("/urls")
 });
+
+
+app.post("/register", (req, res) => {
+  let rng = generateRandomString()
+  users[rng] = {};
+  if (req.body.email === '' || req.body.password === '') {
+    res.status(400);
+    res.send('Error code 400: Please enter input')
+  } else {
+  users[rng].id = rng
+  users[rng].email = req.body.email
+  users[rng].password = req.body.password
+  res.cookie('user_id', rng)
+  res.redirect("/urls")
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
 
 

@@ -1,15 +1,13 @@
 <title>TinyApp</title>
-<% if (username) { %>
-  <h1>
-    <%= `Username: ${username}` %>
+<% if (currentUser) { %>
+  <h1 style="font-size: 20px">
+    <%= `UserId: ${currentUser} Email: ${users[currentUser].email}` %>
   </h1>
   <form method="POST" action="/logout">
     <input type="submit" value="logout">
   </form>
 <% }  else { %>
-  <form method="POST" action="/login">
-    <input type="text" name="username">
-    <input type="submit" value="Submit">
-  </form>
+    <input type="button" value="Register" onclick="window.location.href='/register'">
+    <input type="button" name="login" value="Login" onclick="window.location.href='/login'">
 <% } %>
 
