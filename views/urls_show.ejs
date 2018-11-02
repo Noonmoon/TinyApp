@@ -6,8 +6,11 @@
 <body>
   <h1 style="margin:25px"><%= `ShortURL: ${shortURL}` %></h1>
   <form method="POST" action="/urls/<%=shortURL%>" style="margin:25px">
-    <input id="longURL" type="text" name="longURL" placeholder= <%= longURL %> style="width: 200px; height: 15px">
+    <input id="longURL" type="text" name="longURL" placeholder="<%= longURL %>">
     <input type="submit" value="Update">
+  </form>
+  <form>
+    <input type="button" name="redirect" value="View Urls" onclick="window.location.href='/urls'">
   </form>
 </body>
 </html>

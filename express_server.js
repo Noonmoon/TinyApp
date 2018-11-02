@@ -7,10 +7,7 @@ app.set("view engine", "ejs");
 app.use(cookieParser())
 app.use(bodyParser.urlencoded({extended: true}));
 
-var urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
-};
+var urlDatabase = {};
 
 var users = {};
 
@@ -28,14 +25,17 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
 });
 
+// displays main page
 app.get("/", (req, res) => {
   res.send("Welcome to the main page!");
 });
 
+// displays database in json
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase)
 });
 
+// display main page
 app.get("/urls", (req, res) => {
   let templateVars = {
     users: users,
@@ -45,57 +45,69 @@ app.get("/urls", (req, res) => {
   res.render("urls_index.ejs", templateVars);
 });
 
+// displays new url page, redirects to register if not logged in
 app.get("/urls/new", (req, res) => {
   let templateVars = {
     users: users,
     currentUser: req.cookies["user_id"]
   };
-  res.render("urls_new", templateVars);
+  if (req.cookies["user_id"]) {
+    res.render("urls_new", templateVars);
+  } else {
+    res.redirect("/register")
+  }
 });
 
+// displays shortURL info and ability to update corresponding longURL
 app.get("/urls/:id", (req, res) => {
   let templateVars = {
     users: users,
     currentUser: req.cookies["user_id"],
     shortURL: req.params.id,
-    longURL: urlDatabase[req.params.id]
+    longURL: urlDatabase[req.params.id][req.cookies["user_id"]]
   };
-  res.render("urls_show", templateVars);
+    res.render("urls_show", templateVars)
 });
 
-app.get("/hello", (req, res) => {
-  res.send("<html><body><h1>Hello <b>World</b></h1><body><html>\n");
-});
-
+// redirects client to corresponding longURL
 app.get("/u/:shortURL", (req, res) => {
-  let longURL = urlDatabase[req.params.shortURL]
+  for (var URLcookie in urlDatabase[req.params.shortURL]) {
+    var longURL = urlDatabase[req.params.shortURL][URLcookie]
+  }
   res.redirect(longURL);
 });
 
+// displays registration page
 app.get("/register", (req, res) => {
   res.render("urls_register")
 });
 
+// displays login page
 app.get("/login", (req, res) => {
   res.render("urls_login")
 });
 
+// creates new url and driects user to information page for the shortURL
 app.post("/urls", (req, res) => {
   let rng = generateRandomString()
-  urlDatabase[rng] = req.body.longURL
+  urlDatabase[rng] = {};
+  urlDatabase[rng][req.cookies["user_id"]] = req.body.longURL
   res.redirect(`/urls/${rng}`);
 });
 
+// deletes a url
 app.post("/urls/:id/delete", (req, res) => {
   delete urlDatabase[req.params.id]
   res.redirect("/urls")
 });
 
+// replaces longURL with newURL
 app.post("/urls/:id", (req, res) => {
-  urlDatabase[req.params.id] = req.body.longURL
+  urlDatabase[req.params.id][req.cookies["user_id"]] = req.body.longURL
   res.redirect(`/urls/${req.params.id}`)
 });
 
+// allows user to login, displays error if empty input
 app.post("/login", (req, res) => {
   for (var username in users) {
     var matchFound = false;
@@ -114,12 +126,13 @@ app.post("/login", (req, res) => {
     };
 });
 
+// logs user out
 app.post("/logout", (req, res) => {
   res.clearCookie('user_id')
   res.redirect("/urls")
 });
 
-
+// allows user to register and save their login info
 app.post("/register", (req, res) => {
   let rng = generateRandomString()
   users[rng] = {};
