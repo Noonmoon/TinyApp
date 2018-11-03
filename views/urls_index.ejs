@@ -13,16 +13,20 @@
     <% for (var shortU in urls) { %>
         <% if (urls[shortU][currentUser]) { %>
           <li style="font-size: 20px">
-            <%= `${[shortU]} : ${urls[shortU][currentUser]}` %>  <a href="<%=`http://localhost:3000/urls/${shortU}`%>" style="margin:10px;">Edit</a>
+            <%= `${[shortU]} : ${urls[shortU][currentUser]}` %>  <a href="<%=`http://localhost:3000/urls/${shortU}`%>" style="margin: 10px; font-size: 18px">Edit</a>
             <form method="POST" action="/urls/<%=shortU%>/delete">
               <input type="submit" value="Delete">
             </form>
           </li>
-      <% }; %>
+      <% } %>
     <% }; %>
   </ul>
+    <% if (currentUser === null) { %>
+      <h3>No URLs found!<h3>
+      <h3>Please login or register now to display your URLs</h3>
+    <% } %>
   <form>
-    <input type="button" value="Create new TinyURL" onclick="window.location.href='urls/new'" />
+    <input type="button" value="Create new TinyURL" onclick="window.location.href='urls/new'"/>
   </form>
 </body>
 </html>

@@ -4,11 +4,18 @@
   <% include partials/_header.ejs %>
 </head>
 <body>
+  <% // var cookie = Object.keys(urls[shortURL]) %>
+  <% if (currentUser === null) { %>
+       <h3>Please login to view this link</h3>
+  <% } else if (currentUser !== Object.keys(urls[shortURL]).toString()) { %>
+       <h3>Error: Do not have permissions to view this link</h3>
+  <% } else { %>
   <h1 style="margin:25px"><%= `ShortURL: ${shortURL}` %></h1>
   <form method="POST" action="/urls/<%=shortURL%>" style="margin:25px">
     <input id="longURL" type="text" name="longURL" placeholder="<%= longURL %>">
     <input type="submit" value="Update">
   </form>
+  <% } %>
   <form>
     <input type="button" name="redirect" value="View Urls" onclick="window.location.href='/urls'">
   </form>
